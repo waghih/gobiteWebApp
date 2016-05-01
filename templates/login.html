@@ -1,0 +1,25 @@
+<div class="jumbotron text-center">
+     <div id="inputContainer" class="inputDemo">
+         <md-content layout-padding>
+            <form name="projectForm">
+               <md-input-container class="md-block">
+                  <label>User Name</label>
+                  <input required name="userName">
+                  <div ng-messages="projectForm.userName.$error">
+                     <div ng-message="required">This is required.</div>
+                  </div>
+               </md-input-container>
+               <md-input-container class="md-block">
+                  <label>Email</label>
+                  <input required type="email" name="userEmail" minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/" />
+                  <div ng-messages="projectForm.userEmail.$error" role="alert">
+                     <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
+                        Your email must be between 10 and 100 characters long and should be a valid email address.
+                     </div>
+                  </div>
+               </md-input-container>  
+				<md-button class="primary" ng-click="login()"> Login </md-button>
+            </form>
+         </md-content>
+      </div>
+</div>
