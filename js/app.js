@@ -1,18 +1,20 @@
 angular.module('app', ['appControllers','appServices','ngMaterial','ngRoute'])
 
-.config(function ($routeProvider) {
-  $routeProvider
-    .when('/', {
-      controller: "LoginCtrl",
-      templateUrl: "templates/login.html"
-    })
-    .when('dashboard',{
-    	controller: "Dashboard",
-    	templateUrl: "templates/dashboard.html"
-    })
-    .otherwise({
-      redirectTo: '/'
-    });
+.config(function($stateProvider, $urlRouterProvider){
+    $urlRouterProvider.otherwise('/');
+    $stateProvider
+      .state("login", {
+      url:"/",
+      controller: "LoginController",
+      templateUrl: "views/login.html"
+      })
+      
+      .state("application", {
+      url:"/app",
+      controller: "MainController",
+      templateUrl: "views/application.html",
+      params: {'test': null}
+  })
 });
 
 
