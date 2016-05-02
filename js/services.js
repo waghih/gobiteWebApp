@@ -1,21 +1,15 @@
 angular.module('appServices', [])
 
-.service('AuthenticationService', ["$http", "$state", function($http, $state){
-	var self = this;
-	self.checkToken = function(token){
-		var data = {token: token};
-		$http.post("endpoints/checkToken.php", data).success(function(response){
-			if (response === "unauthorized"){
-				console.log("Logged out");
-				$state.go("login")
-			} else {
-				console.log("Logged In");
-				return response;
-			}
-		}).error(function(error){
-			$state.go("login")
-		})
-		
-	}
+.service('AuthenticationService',function($http, $state){
 
-}]);
+	var baseUrl = 'api/';
+	return{
+		checkToken: function(token){
+			var data = {token: token};
+			console.log(data);
+			return $http.post(baseUrl+"checkToken.php", data).then(function(response){
+				return response.data;
+			});		
+		}
+	}
+});

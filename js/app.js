@@ -1,20 +1,20 @@
-angular.module('app', ['appControllers','appServices','ngMaterial','ngRoute'])
+angular.module('app', ['appControllers','appServices','ngMaterial','ngRoute','ui.router'])
 
 .config(function($stateProvider, $urlRouterProvider){
     $urlRouterProvider.otherwise('/');
     $stateProvider
       .state("login", {
-      url:"/",
-      controller: "LoginController",
-      templateUrl: "views/login.html"
+        url:"/",
+        controller: "LoginCtrl",
+        templateUrl: "templates/login.html"
       })
       
       .state("application", {
-      url:"/app",
-      controller: "MainController",
-      templateUrl: "views/application.html",
-      params: {'test': null}
-  })
+        url:"/app",
+        controller: "DashboardCtrl",
+        templateUrl: "templates/dashboard.html",
+        params: {'test': null}
+      })
 });
 
 

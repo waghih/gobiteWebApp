@@ -1,8 +1,16 @@
 angular.module('appControllers',[])
 
+.run(function($rootScope){
 
-.controller("LoginController", function($scope, $http, $state){
+    $rootScope.users=[];
+    $rootScope.isLoggedIn=false;
     
+
+})
+
+
+.controller("LoginCtrl", function($scope, $http, $state, $rootScope){
+    var baseUrl = 'api/';
     //Variables
     $scope.signUpInfo = {
         username: undefined,
@@ -34,7 +42,11 @@ angular.module('appControllers',[])
             password: $scope.signUpInfo.password
         }
         
-        $http.post("endpoints/signup.php", data).success(function(response){
+        $http.post(baseUrl+"signup.php", data,{
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8;'
+            }
+        }).success(function(response){
             console.log(response);
             localStorage.setItem("token", JSON.stringify(response));
             $state.go("application");
@@ -44,15 +56,23 @@ angular.module('appControllers',[])
     };
     
     $scope.loginUser = function () {
-         var data = {
+        var usertoken = Math.random();
+        var data = {
             username: $scope.loginInfo.username,
-            password: $scope.loginInfo.password
+            password: $scope.loginInfo.password,
+            token: usertoken
         }
         
-        $http.post("endpoints/login.php", data).success(function(response){
+        $http.post(baseUrl+"login.php", data).success(function(response){
             console.log(response);
             localStorage.setItem("token", JSON.stringify(response));
-            $state.go("application", result);
+            if(response === "ERROR"){
+                $state.go("login")
+            }else{
+                $rootScope.isLoggedIn = true;
+                $state.go("application", result);
+            }
+            
         }).error(function(error){
             console.error(error);
         });
@@ -63,22 +83,41 @@ angular.module('appControllers',[])
 
 })
 
-.controller("MainController", function ($scope, $state, $http, AuthenticationService){
+.controller("DashboardCtrl", function($scope, $state, $http, AuthenticationService, $rootScope){
     //If user is not logged in
+    var baseUrl = 'api/';
+    var auth = ''
 	var token;
 	if (localStorage['token']){
     token = JSON.parse(localStorage['token']);
 	} else {
 	token = "something stupid";
 	}
-	AuthenticationService.checkToken(token);
-	
+    console.log(token);
+	AuthenticationService.checkToken(token).then(function(response){
+        auth = response;
+        console.log(auth);
+        if(auth === "unauthorized"){
+            $rootScope.isLoggedIn = false;
+        }
+        else{
+            $rootScope.isLoggedIn = true;
+        }
+    });
+    // console.log(AuthenticationService.checkToken(token))
+    // console.log(auth);
+	console.log($rootScope.isLoggedIn)
+    console.log('babi')
+    if(!$rootScope.isLoggedIn){
+        $state.go("login")
+    }
+
 	$scope.logout = function(){
 		var data = {
 			token: token
 		}
 		
-		$http.post('endpoints/logout.php', data).success(function(response){
+		$http.post(baseUrl+'logout.php', data).success(function(response){
 			console.log(response)
 			localStorage.clear();
 			$state.go("login");
